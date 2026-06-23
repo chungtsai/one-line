@@ -399,6 +399,7 @@ function renderGraph() {
       const my = (y1 + y2) / 2;
       
       const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      arrow.setAttribute('class', 'edge-arrow');
       const arrowSize = 10;
       
       // Triangle points oriented along direction
@@ -427,6 +428,7 @@ function renderGraph() {
     
     // Draw a curved dotted path connecting the portals to show they are connected
     const pLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    pLine.setAttribute('class', 'portal-arc');
     const x1 = nodeA.x, y1 = nodeA.y;
     const x2 = nodeB.x, y2 = nodeB.y;
     
@@ -999,22 +1001,31 @@ function updatePointerPosition(e) {
 document.addEventListener('mousemove', (e) => {
   if (isDrawing) {
     updatePointerPosition(e);
+    // ponytail: proximity check for mouse to handle quick dragging and ensure line connects reliably
+    const mouseX = pointerX;
+    const mouseY = pointerY;
+    activeLevel.nodes.forEach(node => {
+      const dist = Math.hypot(node.x - mouseX, node.y - mouseY);
+      if (dist < 25) { // trigger threshold
+        handleNodeInputHover(node.id);
+      }
+    });
     renderGraph();
   }
 });
 
 document.addEventListener('touchmove', (e) => {
   if (isDrawing) {
+    if (e.cancelable) e.preventDefault(); // ponytail: prevent mobile viewport scrolling while dragging paths
     updatePointerPosition(e);
-    // For touches, we can automatically detect which node we are hovering over
-    const rect = svgEl.getBoundingClientRect();
+    // For touches, we automatically detect which node we are hovering over
     const touchX = pointerX;
     const touchY = pointerY;
     
     // Find closest node
     activeLevel.nodes.forEach(node => {
       const dist = Math.hypot(node.x - touchX, node.y - touchY);
-      if (dist < 22) { // trigger threshold
+      if (dist < 25) { // ponytail: trigger threshold aligned with mouse proximity
         handleNodeInputHover(node.id);
       }
     });
@@ -1031,6 +1042,13 @@ document.addEventListener('mouseup', () => {
 });
 
 document.addEventListener('touchend', () => {
+  if (isDrawing) {
+    isDrawing = false;
+    renderGraph();
+  }
+});
+
+document.addEventListener('touchcancel', () => {
   if (isDrawing) {
     isDrawing = false;
     renderGraph();

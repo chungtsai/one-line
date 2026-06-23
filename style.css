@@ -321,12 +321,14 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
+  touch-action: none; /* ponytail: prevent native scroll/zoom gestures on game board */
 }
 
 svg#game-svg {
   width: 100%;
   height: 100%;
   display: block;
+  touch-action: none; /* ponytail: fallback for touch interface scrolling */
 }
 
 /* Game Elements in SVG */
@@ -351,15 +353,22 @@ svg#game-svg {
 .edge-line {
   stroke-linecap: round;
   transition: stroke 0.25s, stroke-width 0.25s;
+  pointer-events: none;
 }
 
 .edge-arrow {
   fill: rgba(255,255,255,0.4);
+  pointer-events: none;
+}
+
+.portal-arc {
+  pointer-events: none;
 }
 
 .portal-ring {
   animation: rotatePortal 6s linear infinite;
   transform-origin: center;
+  pointer-events: none;
 }
 
 /* Controls panel below grid */
@@ -584,4 +593,203 @@ svg#game-svg {
 }
 .star-icon.dimmed {
   opacity: 0.25;
+}
+
+/* ponytail: Mobile Screen Optimizations (YAGNI style, keep media queries minimal and clean) */
+@media (max-width: 600px) {
+  :root {
+    --shadow-neon: 0 0 10px var(--accent-glow);
+  }
+
+  body {
+    background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px; /* smaller grids on mobile */
+  }
+
+  #app {
+    padding: 12px;
+    min-height: 100dvh; /* responsive height */
+  }
+
+  header {
+    margin-bottom: 12px;
+  }
+
+  .logo {
+    font-size: 1.6rem;
+  }
+
+  .glass-panel {
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+
+  /* Home Screen */
+  #screen-home h1 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+  }
+
+  #screen-home p {
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+  }
+
+  .home-illustration {
+    margin: 15px 0;
+  }
+
+  .home-illustration svg {
+    width: 180px;
+    height: 130px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  /* Level Selection */
+  .level-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+    max-height: 55dvh; /* dynamic height limit for scrolling levels */
+  }
+
+  .level-card {
+    padding: 12px 6px;
+    border-radius: 12px;
+    gap: 4px;
+  }
+
+  .level-num {
+    font-size: 1.3rem;
+  }
+
+  .level-name {
+    font-size: 0.7rem;
+  }
+
+  .level-card .stars-container {
+    font-size: 0.7rem;
+  }
+
+  .badges {
+    gap: 2px;
+  }
+
+  .badge-portal, .badge-oneway, .badge-double {
+    padding: 1px 4px;
+    font-size: 0.6rem;
+  }
+
+  /* Game Interface */
+  .level-name-display {
+    font-size: 1.2rem;
+  }
+
+  .level-desc-display {
+    font-size: 0.75rem;
+  }
+
+  .game-stats {
+    gap: 8px;
+  }
+
+  .stat-box {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    gap: 4px;
+  }
+
+  .canvas-container {
+    border-radius: 12px;
+    margin-bottom: 10px;
+  }
+
+  .game-controls {
+    margin-top: 2px;
+    gap: 8px;
+  }
+
+  .control-btn-group {
+    gap: 6px;
+  }
+
+  .game-controls .btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
+  /* Overlay Modal */
+  .overlay-content {
+    padding: 30px 20px;
+    border-radius: 20px;
+    width: 92%;
+  }
+
+  .overlay-title {
+    font-size: 1.8rem;
+  }
+
+  .overlay-stars {
+    margin: 15px 0;
+    gap: 8px;
+  }
+
+  .overlay-star {
+    font-size: 2.2rem;
+  }
+
+  .overlay-stats-display {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .overlay-stat-val {
+    font-size: 1.1rem;
+  }
+
+  .overlay-stat-lbl {
+    font-size: 0.7rem;
+  }
+
+  .overlay-buttons {
+    gap: 8px;
+  }
+
+  .overlay-buttons .btn {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Very small screens optimization (e.g. iPhone SE / width <= 360px) */
+@media (max-width: 360px) {
+  .glass-panel {
+    padding: 16px 12px;
+  }
+
+  #screen-home h1 {
+    font-size: 1.8rem;
+  }
+
+  .home-illustration svg {
+    width: 150px;
+    height: 110px;
+  }
+
+  .level-grid {
+    grid-template-columns: repeat(3, 1fr); /* lock to 3 columns on tiny screens */
+    gap: 8px;
+  }
+  
+  .game-controls .btn {
+    padding: 8px 8px;
+    font-size: 0.8rem;
+  }
 }
