@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>一筆劃幾何挑戰 - One Line Stroke Puzzle Game</title>
+  <meta name="description" content="用連續不斷的線條挑戰你的大腦！極簡、炫目的幾何益智遊戲，包含多種特殊關卡與機關（傳送門、單向道、雙重線路）。">
+  <meta name="keywords" content="一筆畫,幾何遊戲,益智,網頁遊戲,傳送門,單向道,雙道路">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- App Wrapper -->
+  <div id="app" role="main">
+    
+    <!-- HEADER -->
+    <header>
+      <div class="logo" id="app-logo">ONE<span>LINE</span></div>
+      <button class="sound-toggle" id="sound-toggle" title="切換音效" aria-label="切換音效">🔊</button>
+    </header>
+
+    <!-- SCREEN 1: HOME SCREEN -->
+    <section class="screen active" id="screen-home" aria-labelledby="home-title">
+      <div class="glass-panel">
+        <h1 id="home-title" class="logo">ONE LINE</h1>
+        <p>一筆畫過所有線段！<br>考驗邏輯與空間想像力的經典幾何益智遊戲。</p>
+        
+        <!-- Premium Neon SVG Illustration -->
+        <!-- ponytail: inline SVG for visual decoration instead of heavy assets -->
+        <div class="home-illustration">
+          <svg width="220" height="160" viewBox="0 0 220 160">
+            <defs>
+              <filter id="logo-glow">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            <!-- Inactive tracks -->
+            <line x1="30" y1="80" x2="110" y2="20" stroke="rgba(255,255,255,0.06)" stroke-width="4" stroke-linecap="round" />
+            <line x1="110" y1="20" x2="190" y2="80" stroke="rgba(255,255,255,0.06)" stroke-width="4" stroke-linecap="round" />
+            <line x1="190" y1="80" x2="110" y2="140" stroke="rgba(255,255,255,0.06)" stroke-width="4" stroke-linecap="round" />
+            <line x1="110" y1="140" x2="30" y2="80" stroke="rgba(255,255,255,0.06)" stroke-width="4" stroke-linecap="round" />
+            <line x1="30" y1="80" x2="190" y2="80" stroke="rgba(255,255,255,0.06)" stroke-width="4" stroke-linecap="round" />
+
+            <!-- Active glowing tracks path: 30,80 -> 110,20 -> 190,80 -> 110,140 -> 30,80 -->
+            <path d="M 30 80 L 110 20 L 190 80 L 110 140" fill="none" stroke="#0df" stroke-width="4" stroke-linecap="round" filter="url(#logo-glow)">
+              <animate attributeName="stroke-dasharray" from="0, 400" to="400, 0" dur="4s" repeatCount="indefinite" />
+            </path>
+            
+            <!-- Nodes -->
+            <circle cx="30" cy="80" r="8" fill="#0df" filter="url(#logo-glow)" />
+            <circle cx="110" cy="20" r="8" fill="#0df" filter="url(#logo-glow)" />
+            <circle cx="190" cy="80" r="8" fill="#0df" filter="url(#logo-glow)" />
+            <circle cx="110" cy="140" r="8" fill="rgba(30, 30, 60, 0.9)" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
+          </svg>
+        </div>
+
+        <button class="btn" id="start-game-btn" type="button">
+          開始挑戰
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: LEVEL SELECTION -->
+    <section class="screen" id="screen-levels" aria-labelledby="levels-title">
+      <div class="glass-panel" style="max-width: 750px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 10px;">
+          <h2 id="levels-title" style="font-size: 2rem; font-weight: 800;">選擇關卡</h2>
+          <button class="btn btn-secondary" id="level-select-back" style="padding: 8px 16px; font-size: 0.9rem;">返回主頁</button>
+        </div>
+        <p style="color: var(--text-secondary); text-align: left;">請解鎖前面的關卡以挑戰更難的謎題。包含傳送門與方向機關！</p>
+        
+        <div class="level-grid" id="level-grid" role="grid">
+          <!-- Level Cards dynamically populated by game.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: GAMEPLAY BOARD -->
+    <section class="screen" id="screen-game" aria-labelledby="level-title-text">
+      <!-- Game header -->
+      <div class="game-header">
+        <div class="level-title-container">
+          <h2 id="level-title-text" class="level-name-display">載入中...</h2>
+          <span class="level-desc-display">載入關卡說明...</span>
+        </div>
+        <div class="game-stats">
+          <div class="stars-indicator" aria-label="當前評星">
+            <span class="star-icon">★</span>
+            <span class="star-icon">★</span>
+            <span class="star-icon">★</span>
+          </div>
+          <div class="stat-box" id="time-stat">⏱️ 時間: 0秒</div>
+          <div class="stat-box" id="step-stat">🏁 進度: 0/0</div>
+        </div>
+      </div>
+
+      <!-- Canvas/SVG Container -->
+      <div class="canvas-container">
+        <svg id="game-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
+          <!-- Rendered dynamically by game.js -->
+        </svg>
+      </div>
+
+      <!-- Controls -->
+      <div class="game-controls">
+        <button class="btn btn-secondary" id="game-back" aria-label="返回關卡選擇">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          關卡
+        </button>
+        
+        <div class="control-btn-group">
+          <button class="btn btn-secondary" id="undo-btn" title="上一步 (快速鍵: U)" aria-label="復原上一步">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 7v6h6M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"/></svg>
+            復原
+          </button>
+          
+          <button class="btn btn-secondary" id="reset-btn" title="重設關卡 (快速鍵: R)" aria-label="重設關卡">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 11-.57-8.38l5.67-5.67"/></svg>
+            重設
+          </button>
+
+          <button class="btn" id="hint-btn" title="提示 (快速鍵: H)" aria-label="獲得提示">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9.663 17h4.673M12 3v1M12 20v1M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+            提示
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- WIN OVERLAY MODAL -->
+    <div class="overlay" id="win-overlay" role="dialog" aria-modal="true" aria-labelledby="win-title">
+      <div class="overlay-content">
+        <h2 id="win-title" class="overlay-title">完美通關！</h2>
+        <p style="color: var(--text-secondary);">你成功一筆畫完了所有的路徑！</p>
+        
+        <!-- Stars rating visual display -->
+        <div class="overlay-stars">
+          <span class="overlay-star">★</span>
+          <span class="overlay-star">★</span>
+          <span class="overlay-star">★</span>
+        </div>
+
+        <!-- Completion Stats -->
+        <div class="overlay-stats-display">
+          <div class="overlay-stat-item">
+            <span class="overlay-stat-val" id="win-time-val">0秒</span>
+            <span class="overlay-stat-lbl">通關時間</span>
+          </div>
+          <div class="overlay-stat-item">
+            <span class="overlay-stat-val" id="win-resets-val">0</span>
+            <span class="overlay-stat-lbl">重試次數</span>
+          </div>
+          <div class="overlay-stat-item">
+            <span class="overlay-stat-val" id="win-hints-val">無</span>
+            <span class="overlay-stat-lbl">提示使用</span>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="overlay-buttons">
+          <button class="btn" id="next-level-btn">下一關 (Next Level)</button>
+          <button class="btn btn-secondary" id="restart-btn">重新挑戰 (Restart)</button>
+          <button class="btn btn-secondary" id="overlay-menu-btn">關卡選擇 (Menu)</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="levels.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

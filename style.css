@@ -1,0 +1,587 @@
+/* ponytail: clean, structured vanilla CSS. Using CSS variables for design system & theme customization. No framework dependencies. */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+:root {
+  --bg-primary: #0a0a16;
+  --bg-secondary: rgba(20, 20, 45, 0.6);
+  --accent-color: #0df;
+  --accent-glow: rgba(0, 221, 255, 0.45);
+  --portal-color: #bf5af2;
+  --portal-glow: rgba(191, 90, 242, 0.5);
+  --double-color: #30d158;
+  --double-glow: rgba(48, 209, 88, 0.5);
+  --error-color: #ff453a;
+  --error-glow: rgba(255, 69, 58, 0.5);
+  --text-primary: #ffffff;
+  --text-secondary: #8e8e9f;
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --shadow-neon: 0 0 15px var(--accent-glow);
+  --card-border: 1px solid rgba(255, 255, 255, 0.1);
+  --card-bg: rgba(255, 255, 255, 0.03);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(90, 120, 255, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(191, 90, 242, 0.08) 0%, transparent 40%),
+    linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+/* App Container */
+#app {
+  width: 100%;
+  max-width: 900px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header & Progress */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  animation: fadeInDown 0.5s ease-out;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #0df 0%, #bf5af2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(0, 221, 255, 0.2);
+  letter-spacing: 1px;
+}
+
+.logo span {
+  font-weight: 300;
+  opacity: 0.8;
+}
+
+/* Screens */
+.screen {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.screen.active {
+  display: flex;
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Glass Card Style */
+.glass-panel {
+  background: var(--bg-secondary);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: var(--card-border);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Buttons */
+.btn {
+  background: linear-gradient(135deg, rgba(0, 221, 255, 0.1) 0%, rgba(191, 90, 242, 0.1) 100%);
+  border: 1px solid rgba(0, 221, 255, 0.4);
+  color: var(--text-primary);
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 15px rgba(0, 221, 255, 0.15);
+  font-family: var(--font-family);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transition: 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 221, 255, 0.3), 0 0 10px rgba(191, 90, 242, 0.2);
+  border-color: #0df;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+}
+
+/* Home Screen */
+#screen-home h1 {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+#screen-home p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.home-illustration {
+  margin: 30px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Level Selection Screen */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 15px;
+  width: 100%;
+  margin-top: 25px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.level-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.level-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.level-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.level-card {
+  background: var(--card-bg);
+  border: var(--card-border);
+  border-radius: 16px;
+  padding: 20px 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.level-card.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.level-card:not(.locked):hover {
+  transform: scale(1.05);
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-neon);
+  background: rgba(0, 221, 255, 0.03);
+}
+
+.level-num {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.level-name {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.level-card .stars-container {
+  display: flex;
+  gap: 2px;
+  font-size: 0.8rem;
+  color: #ff9f0a;
+}
+
+/* Game Interface */
+.game-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.level-title-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.level-name-display {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.level-desc-display {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.game-stats {
+  display: flex;
+  gap: 15px;
+}
+
+.stat-box {
+  background: var(--card-bg);
+  border: var(--card-border);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+.canvas-container {
+  background: rgba(5, 5, 15, 0.5);
+  border: var(--card-border);
+  border-radius: 20px;
+  width: 100%;
+  aspect-ratio: 4/3;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 15px;
+  box-shadow: inset 0 4px 30px rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+svg#game-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Game Elements in SVG */
+.node-circle {
+  transition: r 0.2s, fill 0.2s, stroke 0.2s;
+  cursor: pointer;
+}
+
+.node-circle:hover {
+  r: 16;
+}
+
+.node-label {
+  pointer-events: none;
+  font-weight: 800;
+  font-size: 12px;
+  fill: #fff;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.edge-line {
+  stroke-linecap: round;
+  transition: stroke 0.25s, stroke-width 0.25s;
+}
+
+.edge-arrow {
+  fill: rgba(255,255,255,0.4);
+}
+
+.portal-ring {
+  animation: rotatePortal 6s linear infinite;
+  transform-origin: center;
+}
+
+/* Controls panel below grid */
+.game-controls {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 5px;
+  gap: 10px;
+}
+
+.control-btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+/* Win Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 5, 15, 0.85);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.overlay-content {
+  background: rgba(20, 20, 45, 0.95);
+  border: 1px solid rgba(0, 221, 255, 0.3);
+  border-radius: 28px;
+  padding: 50px 40px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 221, 255, 0.15);
+  transform: translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.overlay.active .overlay-content {
+  transform: translateY(0);
+}
+
+.overlay-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #0df 0%, #30d158 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.overlay-stars {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 25px 0;
+}
+
+.overlay-star {
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.1);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: scale(0.7);
+}
+
+.overlay-star.active {
+  color: #ff9f0a;
+  text-shadow: 0 0 20px rgba(255, 159, 10, 0.6);
+  transform: scale(1.1);
+}
+
+.overlay-stats-display {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  padding: 15px;
+  border: var(--card-border);
+}
+
+.overlay-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.overlay-stat-val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.overlay-stat-lbl {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.overlay-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Animations */
+@keyframes rotatePortal {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0% { filter: drop-shadow(0 0 2px var(--accent-glow)); }
+  50% { filter: drop-shadow(0 0 10px var(--accent-color)); }
+  100% { filter: drop-shadow(0 0 2px var(--accent-glow)); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Level selection helper styling */
+.level-intro {
+  margin-bottom: 10px;
+}
+
+.badge-portal {
+  background: var(--portal-glow);
+  color: #d8b4fe;
+  border: 1px solid var(--portal-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.badge-oneway {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.badge-double {
+  background: var(--double-glow);
+  color: #a7f3d0;
+  border: 1px solid var(--double-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.badges {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* Audio indicator button style */
+.sound-toggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.sound-toggle:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.05);
+}
+
+/* Stars indicator in Game Screen */
+.stars-indicator {
+  display: flex;
+  gap: 2px;
+  color: #ff9f0a;
+}
+.star-icon {
+  font-size: 1rem;
+  transition: opacity 0.3s;
+}
+.star-icon.dimmed {
+  opacity: 0.25;
+}
